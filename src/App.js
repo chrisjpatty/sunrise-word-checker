@@ -30,21 +30,23 @@ const App = () => {
   const getWordsByNumbers = () => {
     let parsed = numbers.replace(/[^0-9,-]/g, "").split(",");
     parsed = parsed.reduce((arr, number) => {
-      if(number.includes('-')){
-        const nums = number.split('-')
-        const first = parseInt(nums[0], 10)
-        const last = parseInt(nums[1], 10)
-        if(!isNaN(first) && !isNaN(last)){
-          for(let i = first; i <= last; i++){
-            arr.push(i)
+      if (number.includes("-")) {
+        const nums = number.split("-");
+        const first = parseInt(nums[0], 10);
+        const last = parseInt(nums[1], 10);
+        if (!isNaN(first) && !isNaN(last)) {
+          for (let i = first; i <= last; i++) {
+            arr.push(i);
           }
         }
-      }else{
-        arr.push(number)
+      } else {
+        arr.push(number);
       }
-      return arr
-    }, [])
-    const words = parsed.map(n => wordTable[n]).filter(x => x);
+      return arr;
+    }, []);
+    const words = parsed
+      .map(n => ({ number: n, word: wordTable[n] }))
+      .filter(x => x.word);
     return words;
   };
 
@@ -56,7 +58,14 @@ const App = () => {
           style={{ width: "50vw", height: "100vh" }}
           src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSPqGiGns5c1SVnrvwfuJC3iECaZdsBYyTLCGnM-Ce--do_jDlsKqfO_G1nWjbZKHcT3XrZjVhodUOf/pubhtml?gid=302395088&amp;single=true&amp;widget=true&amp;headers=false"
         ></iframe>
-        <Column style={{ width: "50vw", height: "100vh", overflowY: 'auto', paddingBottom: 30 }}>
+        <Column
+          style={{
+            width: "50vw",
+            height: "100vh",
+            overflowY: "auto",
+            paddingBottom: 30
+          }}
+        >
           {wordTable ? (
             <Column>
               <Row style={{ paddingTop: 100, marginBottom: 10 }}>
@@ -77,11 +86,22 @@ const App = () => {
                 />
               </Row>
               <Column
-                style={{ alignItems: "center", textAlign: "center", marginTop: 30 }}
+                style={{
+                  alignItems: "center",
+                  textAlign: "left",
+                  marginTop: 30
+                }}
               >
-                {getWordsByNumbers().map((word, i) => (
-                  <Word key={word + i}>{word}</Word>
-                ))}
+                <Table>
+                  <body>
+                    {getWordsByNumbers().map((word, i) => (
+                      <Word key={word + i}>
+                        <td style={{ fontSize: 28 }}>{word.number}:</td>
+                        <td style={{paddingLeft: 10}}>{word.word}</td>
+                      </Word>
+                    ))}
+                  </body>
+                </Table>
               </Column>
             </Column>
           ) : (
@@ -124,6 +144,11 @@ const Loading = styled("h1")`
   margin-bottom: 0px;
 `;
 
-const Word = styled("span")`
+const Table = styled("table")`
+  border: none;
+  border-collapse: collapse;
+`;
+
+const Word = styled("tr")`
   font-size: 36px;
 `;
