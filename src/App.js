@@ -96,8 +96,8 @@ const App = () => {
                   <body>
                     {getWordsByNumbers().map((word, i) => (
                       <Word key={word + i}>
-                        <td style={{ fontSize: 28 }}>{word.number}:</td>
-                        <td style={{paddingLeft: 10}}>{word.word}</td>
+                        <td style={{ fontSize: 28, textAlign: 'right' }}>{word.number}:</td>
+                        <td style={{paddingLeft: 20}}>{word.word}</td>
                       </Word>
                     ))}
                   </body>
