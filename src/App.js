@@ -9,7 +9,9 @@ const SPREADSHEET = `https://docs.google.com/spreadsheets/d/e/2PACX-1vSPqGiGns5c
 const App = () => {
   const [wordTable, setWordTable] = React.useState(null);
   const [numbers, setNumbers] = React.useState("");
+  const [compareNumbers, setCompareNumbers] = React.useState("");
   const input = React.useRef();
+  const input2 = React.useRef();
 
   const onSheetsFetched = result => {
     const table = result.data.reduce((obj, row) => {
@@ -27,8 +29,8 @@ const App = () => {
     });
   }, []);
 
-  const getWordsByNumbers = () => {
-    let parsed = numbers.replace(/[^0-9,-]/g, "").split(",");
+  const getParsedNumbers = text => {
+    let parsed = text.replace(/[^0-9,-]/g, "").split(",");
     parsed = parsed.reduce((arr, number) => {
       if (number.includes("-")) {
         const nums = number.split("-");
@@ -44,10 +46,51 @@ const App = () => {
       }
       return arr;
     }, []);
-    const words = parsed
-      .map(n => ({ number: n, word: wordTable[n] }))
-      .filter(x => x.word);
-    return words;
+    return parsed;
+  }
+
+  const getWordsByNumbers = () => {
+    const parsedNumbers = getParsedNumbers(numbers)
+    const parsedCompare = getParsedNumbers(compareNumbers)
+
+    if(compareNumbers){
+      const words = parsedNumbers
+        .map(n => ({ number: n, word: wordTable[n] }))
+        .filter(x => x.word);
+
+      const compareWords = parsedCompare
+        .map(n => ({ number: n, word: wordTable[n] }))
+        .filter(x => x.word);
+
+      let leftoverWords = []
+      let sharedWords = []
+
+      words.forEach(word => {
+        if(compareWords.find(w => w.number === word.number)){
+          sharedWords.push(word);
+        }else{
+          word.unique = true;
+          leftoverWords.push(word);
+        }
+      })
+
+      compareWords.forEach(word => {
+        if(!words.find(w => w.number === word.number)){
+          word.unique = true;
+          leftoverWords.push(word);
+        }
+      })
+
+      return [
+        ...sharedWords,
+        ...leftoverWords
+      ]
+    }else{
+      const words = parsedNumbers
+        .map(n => ({ number: n, word: wordTable[n] }))
+        .filter(x => x.word);
+      return words;
+    }
   };
 
   return (
@@ -73,14 +116,26 @@ const App = () => {
                   Type numbers here
                 </label>
               </Row>
-              <Row>
+              <Row style={{paddingLeft: 10, paddingRight: 10}}>
                 <Input
+                  style={{marginRight: 7}}
                   ref={input}
                   value={numbers}
                   onChange={e => setNumbers(e.target.value.trimStart())}
                   onFocus={() => {
                     if (input.current) {
                       input.current.select();
+                    }
+                  }}
+                />
+                <Input
+                  style={{marginLeft: 7}}
+                  ref={input2}
+                  value={compareNumbers}
+                  onChange={e => setCompareNumbers(e.target.value.trimStart())}
+                  onFocus={() => {
+                    if (input2.current) {
+                      input2.current.select();
                     }
                   }}
                 />
@@ -92,15 +147,19 @@ const App = () => {
                   marginTop: 30
                 }}
               >
+                {
+                  !!compareNumbers &&
+                  <CompareHint>Shared words are in white</CompareHint>
+                }
                 <Table>
-                  <body>
+                  <tbody>
                     {getWordsByNumbers().map((word, i) => (
-                      <Word key={word + i}>
+                      <Word key={word + i} isUnique={word.unique}>
                         <td style={{ fontSize: 28, textAlign: 'right' }}>{word.number}:</td>
                         <td style={{paddingLeft: 20}}>{word.word}</td>
                       </Word>
                     ))}
-                  </body>
+                  </tbody>
                 </Table>
               </Column>
             </Column>
@@ -127,7 +186,7 @@ const Row = styled("div")`
 
 const Input = styled("input")`
   width: 100%;
-  max-width: 600px;
+  max-width: 500px;
   height: 60px;
   border-radius: 5px;
   background: #fff;
@@ -151,4 +210,13 @@ const Table = styled("table")`
 
 const Word = styled("tr")`
   font-size: 36px;
+  opacity: ${({isUnique}) => isUnique ? .45 : 1}
 `;
+
+const CompareHint = styled('p')`
+  font-size: 24px;
+  margin: 0px 25px;
+  margin-bottom: 30px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid white;
+`
