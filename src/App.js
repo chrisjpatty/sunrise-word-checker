@@ -42,7 +42,7 @@ const App = () => {
           }
         }
       } else {
-        arr.push(number);
+        arr.push(parseInt(number, 10));
       }
       return arr;
     }, []);
