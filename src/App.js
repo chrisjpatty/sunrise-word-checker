@@ -116,9 +116,9 @@ const App = () => {
                   Type numbers here
                 </label>
               </Row>
-              <Row style={{paddingLeft: 10, paddingRight: 10}}>
+              <Column style={{alignItems: 'center'}}>
                 <Input
-                  style={{marginRight: 7}}
+                  style={{marginBottom: 7}}
                   ref={input}
                   value={numbers}
                   onChange={e => setNumbers(e.target.value.trimStart())}
@@ -129,7 +129,7 @@ const App = () => {
                   }}
                 />
                 <Input
-                  style={{marginLeft: 7}}
+                  style={{marginTop: 7}}
                   ref={input2}
                   value={compareNumbers}
                   onChange={e => setCompareNumbers(e.target.value.trimStart())}
@@ -139,7 +139,7 @@ const App = () => {
                     }
                   }}
                 />
-              </Row>
+              </Column>
               <Column
                 style={{
                   alignItems: "center",
@@ -186,7 +186,7 @@ const Row = styled("div")`
 
 const Input = styled("input")`
   width: 100%;
-  max-width: 500px;
+  max-width: 700px;
   height: 60px;
   border-radius: 5px;
   background: #fff;
