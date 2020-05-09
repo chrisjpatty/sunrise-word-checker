@@ -184,7 +184,7 @@ const Row = styled("div")`
   justify-content: center;
 `;
 
-const Input = styled("input")`
+const Input = styled("textarea")`
   width: 100%;
   max-width: 700px;
   height: 60px;
@@ -192,9 +192,10 @@ const Input = styled("input")`
   background: #fff;
   border: none;
   box-shadow: inset 0px 3px 15px rgba(0, 0, 0, 0.3);
-  font-size: 28px;
+  font-size: 24px;
   text-align: center;
   padding: 15px;
+  resize: vertical;
 `;
 
 const Loading = styled("h1")`
